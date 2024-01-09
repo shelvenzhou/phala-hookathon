@@ -12,8 +12,6 @@ contract DeployHookScript is Script {
     function setUp() public {}
 
     function run() public {
-        bytes memory constructorArgs = abi.encode(manager);
-
         // hook contracts must have specific flags encoded in the address
         // ------------------------------ //
         // --- Set your flags in .env --- //
@@ -21,22 +19,49 @@ contract DeployHookScript is Script {
         uint160 flags = getFlagsFromEnv();
         console2.logBytes32(bytes32(uint256(flags)));
 
-        // Mine a salt that will produce a hook address with the correct flags
-        bytes memory creationCode = vm.getCode(vm.envString("HOOK_CONTRACT"));
-        (address hookAddress, bytes32 salt) =
-            HookMiner.find(CREATE2_DEPLOYER, flags, creationCode, constructorArgs);
-
-        // Deploy the hook using CREATE2
-        bytes memory bytecode = abi.encodePacked(creationCode, constructorArgs);
-        vm.startBroadcast();
+        // deterministically deploy the hook to be tested first
         address deployedHook;
-        assembly {
-            deployedHook := create2(0, add(bytecode, 0x20), mload(bytecode), salt)
-        }
-        vm.stopBroadcast();
+        {
+            // Mine a salt that will produce a hook address with the correct flags
+            bytes memory creationCode = vm.getCode(vm.envString("HOOK_CONTRACT"));
+            bytes memory constructorArgs = abi.encode(manager);
+            (address hookAddress, bytes32 salt) =
+                HookMiner.find(CREATE2_DEPLOYER, flags, creationCode, constructorArgs);
 
-        // verify proper create2 usage
-        require(deployedHook == hookAddress, "DeployScript: hook address mismatch");
+            // Deploy the hook using CREATE2
+            bytes memory bytecode = abi.encodePacked(creationCode, constructorArgs);
+            vm.startBroadcast();
+            assembly {
+                deployedHook := create2(0, add(bytecode, 0x20), mload(bytecode), salt)
+            }
+            vm.stopBroadcast();
+
+            // verify proper create2 usage
+            require(deployedHook == hookAddress, "DeployScript: hook address mismatch");
+        }
+
+        // then deploy the backtest hook
+        address deployedBacktestHook;
+        {
+            // Mine a salt that will produce a hook address with the correct flags
+            bytes memory creationCode = vm.getCode(vm.envString("HOOK_BACKTEST"));
+            bytes memory constructorArgs = abi.encode(deployedHook);
+            (address hookAddress, bytes32 salt) =
+                HookMiner.find(CREATE2_DEPLOYER, flags, creationCode, constructorArgs);
+
+            // Deploy the hook using CREATE2
+            bytes memory bytecode = abi.encodePacked(creationCode, constructorArgs);
+            vm.startBroadcast();
+            assembly {
+                deployedBacktestHook := create2(0, add(bytecode, 0x20), mload(bytecode), salt)
+            }
+            vm.stopBroadcast();
+
+            // verify proper create2 usage
+            require(deployedBacktestHook == hookAddress, "DeployScript: backtest hook address mismatch");
+
+            console2.logAddress(deployedBacktestHook);
+        }
     }
 
     /// @dev Read booleans flags from the environemnt and encode them into the uint160 bit flags
