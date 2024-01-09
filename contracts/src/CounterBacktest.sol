@@ -13,10 +13,10 @@ import {Counter} from "./Counter.sol";
 contract CounterBacktest is BaseTestHooks {
     using PoolIdLibrary for PoolKey;
 
-    Counter public immutable counter;
+    address public immutable testContract;
 
-    constructor(IPoolManager _poolManager) {
-        counter = new Counter(_poolManager);
+    constructor(address _testContract) {
+        testContract = _testContract;
     }
 
     function getHookPermissions() public pure returns (Hooks.Permissions memory) {
@@ -41,6 +41,7 @@ contract CounterBacktest is BaseTestHooks {
         override
         returns (bytes4)
     {
+        Counter counter = Counter(testContract);
         return counter.beforeSwap(sender, key, params, hookData);
     }
 
@@ -49,6 +50,7 @@ contract CounterBacktest is BaseTestHooks {
         override
         returns (bytes4)
     {
+        Counter counter = Counter(testContract);
         return counter.afterSwap(sender, key, params, delta, hookData);
     }
 
@@ -58,6 +60,7 @@ contract CounterBacktest is BaseTestHooks {
         IPoolManager.ModifyLiquidityParams calldata params,
         bytes calldata hookData
     ) external override returns (bytes4) {
+        Counter counter = Counter(testContract);
         return counter.beforeAddLiquidity(sender, key, params, hookData);
     }
 
@@ -68,6 +71,7 @@ contract CounterBacktest is BaseTestHooks {
         BalanceDelta delta,
         bytes calldata hookData
     ) external override returns (bytes4) {
+        Counter counter = Counter(testContract);
         return counter.afterAddLiquidity(sender, key, params, delta, hookData);
     }
 }
