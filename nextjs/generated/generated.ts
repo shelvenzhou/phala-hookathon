@@ -792,6 +792,358 @@ export const counterAddress = {
 export const counterConfig = { address: counterAddress, abi: counterABI } as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// CounterBacktest
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ *
+ */
+export const counterBacktestABI = [
+  {
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    inputs: [{ name: '_testContract', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address' },
+      {
+        name: 'key',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      {
+        name: 'params',
+        internalType: 'struct IPoolManager.ModifyLiquidityParams',
+        type: 'tuple',
+        components: [
+          { name: 'tickLower', internalType: 'int24', type: 'int24' },
+          { name: 'tickUpper', internalType: 'int24', type: 'int24' },
+          { name: 'liquidityDelta', internalType: 'int256', type: 'int256' },
+        ],
+      },
+      { name: 'delta', internalType: 'BalanceDelta', type: 'int256' },
+      { name: 'hookData', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'afterAddLiquidity',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      {
+        name: '',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'afterDonate',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      {
+        name: '',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      { name: '', internalType: 'uint160', type: 'uint160' },
+      { name: '', internalType: 'int24', type: 'int24' },
+      { name: '', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'afterInitialize',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      {
+        name: '',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      {
+        name: '',
+        internalType: 'struct IPoolManager.ModifyLiquidityParams',
+        type: 'tuple',
+        components: [
+          { name: 'tickLower', internalType: 'int24', type: 'int24' },
+          { name: 'tickUpper', internalType: 'int24', type: 'int24' },
+          { name: 'liquidityDelta', internalType: 'int256', type: 'int256' },
+        ],
+      },
+      { name: '', internalType: 'BalanceDelta', type: 'int256' },
+      { name: '', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'afterRemoveLiquidity',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address' },
+      {
+        name: 'key',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      {
+        name: 'params',
+        internalType: 'struct IPoolManager.SwapParams',
+        type: 'tuple',
+        components: [
+          { name: 'zeroForOne', internalType: 'bool', type: 'bool' },
+          { name: 'amountSpecified', internalType: 'int256', type: 'int256' },
+          { name: 'sqrtPriceLimitX96', internalType: 'uint160', type: 'uint160' },
+        ],
+      },
+      { name: 'delta', internalType: 'BalanceDelta', type: 'int256' },
+      { name: 'hookData', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'afterSwap',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address' },
+      {
+        name: 'key',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      {
+        name: 'params',
+        internalType: 'struct IPoolManager.ModifyLiquidityParams',
+        type: 'tuple',
+        components: [
+          { name: 'tickLower', internalType: 'int24', type: 'int24' },
+          { name: 'tickUpper', internalType: 'int24', type: 'int24' },
+          { name: 'liquidityDelta', internalType: 'int256', type: 'int256' },
+        ],
+      },
+      { name: 'hookData', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'beforeAddLiquidity',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      {
+        name: '',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'beforeDonate',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      {
+        name: '',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      { name: '', internalType: 'uint160', type: 'uint160' },
+      { name: '', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'beforeInitialize',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      {
+        name: '',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      {
+        name: '',
+        internalType: 'struct IPoolManager.ModifyLiquidityParams',
+        type: 'tuple',
+        components: [
+          { name: 'tickLower', internalType: 'int24', type: 'int24' },
+          { name: 'tickUpper', internalType: 'int24', type: 'int24' },
+          { name: 'liquidityDelta', internalType: 'int256', type: 'int256' },
+        ],
+      },
+      { name: '', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'beforeRemoveLiquidity',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address' },
+      {
+        name: 'key',
+        internalType: 'struct PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'currency0', internalType: 'Currency', type: 'address' },
+          { name: 'currency1', internalType: 'Currency', type: 'address' },
+          { name: 'fee', internalType: 'uint24', type: 'uint24' },
+          { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+          { name: 'hooks', internalType: 'contract IHooks', type: 'address' },
+        ],
+      },
+      {
+        name: 'params',
+        internalType: 'struct IPoolManager.SwapParams',
+        type: 'tuple',
+        components: [
+          { name: 'zeroForOne', internalType: 'bool', type: 'bool' },
+          { name: 'amountSpecified', internalType: 'int256', type: 'int256' },
+          { name: 'sqrtPriceLimitX96', internalType: 'uint160', type: 'uint160' },
+        ],
+      },
+      { name: 'hookData', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'beforeSwap',
+    outputs: [{ name: '', internalType: 'bytes4', type: 'bytes4' }],
+  },
+  {
+    stateMutability: 'pure',
+    type: 'function',
+    inputs: [],
+    name: 'getHookPermissions',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct Hooks.Permissions',
+        type: 'tuple',
+        components: [
+          { name: 'beforeInitialize', internalType: 'bool', type: 'bool' },
+          { name: 'afterInitialize', internalType: 'bool', type: 'bool' },
+          { name: 'beforeAddLiquidity', internalType: 'bool', type: 'bool' },
+          { name: 'afterAddLiquidity', internalType: 'bool', type: 'bool' },
+          { name: 'beforeRemoveLiquidity', internalType: 'bool', type: 'bool' },
+          { name: 'afterRemoveLiquidity', internalType: 'bool', type: 'bool' },
+          { name: 'beforeSwap', internalType: 'bool', type: 'bool' },
+          { name: 'afterSwap', internalType: 'bool', type: 'bool' },
+          { name: 'beforeDonate', internalType: 'bool', type: 'bool' },
+          { name: 'afterDonate', internalType: 'bool', type: 'bool' },
+          { name: 'noOp', internalType: 'bool', type: 'bool' },
+          { name: 'accessLock', internalType: 'bool', type: 'bool' },
+        ],
+      },
+    ],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'testContract',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  { type: 'error', inputs: [], name: 'HookNotImplemented' },
+] as const
+
+/**
+ *
+ */
+export const counterBacktestAddress = {
+  31337: '0x33000E1052bb7FA6F2f9C884E6275b6438d74AF4',
+} as const
+
+/**
+ *
+ */
+export const counterBacktestConfig = { address: counterBacktestAddress, abi: counterBacktestABI } as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CurrencyLibrary
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -5079,194 +5431,6 @@ export const sqrtPriceMathABI = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Test
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const testABI = [
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'IS_TEST',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'failed',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: '', internalType: 'string', type: 'string', indexed: false }],
-    name: 'log',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: '', internalType: 'address', type: 'address', indexed: false }],
-    name: 'log_address',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: 'val', internalType: 'uint256[]', type: 'uint256[]', indexed: false }],
-    name: 'log_array',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: 'val', internalType: 'int256[]', type: 'int256[]', indexed: false }],
-    name: 'log_array',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: 'val', internalType: 'address[]', type: 'address[]', indexed: false }],
-    name: 'log_array',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: '', internalType: 'bytes', type: 'bytes', indexed: false }],
-    name: 'log_bytes',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32', indexed: false }],
-    name: 'log_bytes32',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: '', internalType: 'int256', type: 'int256', indexed: false }],
-    name: 'log_int',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'address', type: 'address', indexed: false },
-    ],
-    name: 'log_named_address',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'uint256[]', type: 'uint256[]', indexed: false },
-    ],
-    name: 'log_named_array',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'int256[]', type: 'int256[]', indexed: false },
-    ],
-    name: 'log_named_array',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'address[]', type: 'address[]', indexed: false },
-    ],
-    name: 'log_named_array',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'bytes', type: 'bytes', indexed: false },
-    ],
-    name: 'log_named_bytes',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'bytes32', type: 'bytes32', indexed: false },
-    ],
-    name: 'log_named_bytes32',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'int256', type: 'int256', indexed: false },
-      { name: 'decimals', internalType: 'uint256', type: 'uint256', indexed: false },
-    ],
-    name: 'log_named_decimal_int',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'uint256', type: 'uint256', indexed: false },
-      { name: 'decimals', internalType: 'uint256', type: 'uint256', indexed: false },
-    ],
-    name: 'log_named_decimal_uint',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'int256', type: 'int256', indexed: false },
-    ],
-    name: 'log_named_int',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'string', type: 'string', indexed: false },
-    ],
-    name: 'log_named_string',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'val', internalType: 'uint256', type: 'uint256', indexed: false },
-    ],
-    name: 'log_named_uint',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: '', internalType: 'string', type: 'string', indexed: false }],
-    name: 'log_string',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256', indexed: false }],
-    name: 'log_uint',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [{ name: '', internalType: 'bytes', type: 'bytes', indexed: false }],
-    name: 'logs',
-  },
-] as const
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TickBitmap
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -7159,6 +7323,606 @@ export function usePrepareCounterBeforeSwap(
     functionName: 'beforeSwap',
     ...config,
   } as UsePrepareContractWriteConfig<typeof counterABI, 'beforeSwap'>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link counterBacktestABI}__.
+ *
+ *
+ */
+export function useCounterBacktestRead<
+  TFunctionName extends string,
+  TSelectData = ReadContractResult<typeof counterBacktestABI, TFunctionName>,
+>(
+  config: Omit<UseContractReadConfig<typeof counterBacktestABI, TFunctionName, TSelectData>, 'abi' | 'address'> & {
+    chainId?: keyof typeof counterBacktestAddress
+  } = {} as any,
+) {
+  return useContractRead({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    ...config,
+  } as UseContractReadConfig<typeof counterBacktestABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"getHookPermissions"`.
+ *
+ *
+ */
+export function useCounterBacktestGetHookPermissions<
+  TFunctionName extends 'getHookPermissions',
+  TSelectData = ReadContractResult<typeof counterBacktestABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof counterBacktestABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'getHookPermissions',
+    ...config,
+  } as UseContractReadConfig<typeof counterBacktestABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"testContract"`.
+ *
+ *
+ */
+export function useCounterBacktestTestContract<
+  TFunctionName extends 'testContract',
+  TSelectData = ReadContractResult<typeof counterBacktestABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof counterBacktestABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'testContract',
+    ...config,
+  } as UseContractReadConfig<typeof counterBacktestABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__.
+ *
+ *
+ */
+export function useCounterBacktestWrite<
+  TFunctionName extends string,
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      > & { address?: Address; chainId?: TChainId }
+    : UseContractWriteConfig<typeof counterBacktestABI, TFunctionName, TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, TFunctionName, TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterAddLiquidity"`.
+ *
+ *
+ */
+export function useCounterBacktestAfterAddLiquidity<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'afterAddLiquidity'>['request']['abi'],
+        'afterAddLiquidity',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'afterAddLiquidity' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'afterAddLiquidity', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'afterAddLiquidity'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'afterAddLiquidity', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterAddLiquidity',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterDonate"`.
+ *
+ *
+ */
+export function useCounterBacktestAfterDonate<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'afterDonate'>['request']['abi'],
+        'afterDonate',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'afterDonate' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'afterDonate', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'afterDonate'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'afterDonate', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterDonate',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterInitialize"`.
+ *
+ *
+ */
+export function useCounterBacktestAfterInitialize<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'afterInitialize'>['request']['abi'],
+        'afterInitialize',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'afterInitialize' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'afterInitialize', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'afterInitialize'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'afterInitialize', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterInitialize',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterRemoveLiquidity"`.
+ *
+ *
+ */
+export function useCounterBacktestAfterRemoveLiquidity<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'afterRemoveLiquidity'>['request']['abi'],
+        'afterRemoveLiquidity',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'afterRemoveLiquidity' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'afterRemoveLiquidity', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'afterRemoveLiquidity'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'afterRemoveLiquidity', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterRemoveLiquidity',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterSwap"`.
+ *
+ *
+ */
+export function useCounterBacktestAfterSwap<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'afterSwap'>['request']['abi'],
+        'afterSwap',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'afterSwap' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'afterSwap', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'afterSwap'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'afterSwap', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterSwap',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeAddLiquidity"`.
+ *
+ *
+ */
+export function useCounterBacktestBeforeAddLiquidity<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'beforeAddLiquidity'>['request']['abi'],
+        'beforeAddLiquidity',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'beforeAddLiquidity' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'beforeAddLiquidity', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'beforeAddLiquidity'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'beforeAddLiquidity', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeAddLiquidity',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeDonate"`.
+ *
+ *
+ */
+export function useCounterBacktestBeforeDonate<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'beforeDonate'>['request']['abi'],
+        'beforeDonate',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'beforeDonate' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'beforeDonate', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'beforeDonate'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'beforeDonate', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeDonate',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeInitialize"`.
+ *
+ *
+ */
+export function useCounterBacktestBeforeInitialize<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'beforeInitialize'>['request']['abi'],
+        'beforeInitialize',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'beforeInitialize' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'beforeInitialize', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'beforeInitialize'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'beforeInitialize', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeInitialize',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeRemoveLiquidity"`.
+ *
+ *
+ */
+export function useCounterBacktestBeforeRemoveLiquidity<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'beforeRemoveLiquidity'>['request']['abi'],
+        'beforeRemoveLiquidity',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'beforeRemoveLiquidity' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'beforeRemoveLiquidity', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'beforeRemoveLiquidity'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'beforeRemoveLiquidity', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeRemoveLiquidity',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeSwap"`.
+ *
+ *
+ */
+export function useCounterBacktestBeforeSwap<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof counterBacktestAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof counterBacktestABI, 'beforeSwap'>['request']['abi'],
+        'beforeSwap',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'beforeSwap' }
+    : UseContractWriteConfig<typeof counterBacktestABI, 'beforeSwap', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'beforeSwap'
+      } = {} as any,
+) {
+  return useContractWrite<typeof counterBacktestABI, 'beforeSwap', TMode>({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeSwap',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__.
+ *
+ *
+ */
+export function usePrepareCounterBacktestWrite<TFunctionName extends string>(
+  config: Omit<UsePrepareContractWriteConfig<typeof counterBacktestABI, TFunctionName>, 'abi' | 'address'> & {
+    chainId?: keyof typeof counterBacktestAddress
+  } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, TFunctionName>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterAddLiquidity"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestAfterAddLiquidity(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterAddLiquidity'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterAddLiquidity',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterAddLiquidity'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterDonate"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestAfterDonate(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterDonate'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterDonate',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterDonate'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterInitialize"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestAfterInitialize(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterInitialize'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterInitialize',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterInitialize'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterRemoveLiquidity"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestAfterRemoveLiquidity(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterRemoveLiquidity'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterRemoveLiquidity',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterRemoveLiquidity'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"afterSwap"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestAfterSwap(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterSwap'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'afterSwap',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'afterSwap'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeAddLiquidity"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestBeforeAddLiquidity(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeAddLiquidity'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeAddLiquidity',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeAddLiquidity'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeDonate"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestBeforeDonate(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeDonate'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeDonate',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeDonate'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeInitialize"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestBeforeInitialize(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeInitialize'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeInitialize',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeInitialize'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeRemoveLiquidity"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestBeforeRemoveLiquidity(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeRemoveLiquidity'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeRemoveLiquidity',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeRemoveLiquidity'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link counterBacktestABI}__ and `functionName` set to `"beforeSwap"`.
+ *
+ *
+ */
+export function usePrepareCounterBacktestBeforeSwap(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeSwap'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof counterBacktestAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: counterBacktestABI,
+    address: counterBacktestAddress[31337],
+    functionName: 'beforeSwap',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof counterBacktestABI, 'beforeSwap'>)
 }
 
 /**
@@ -17891,314 +18655,6 @@ export function useRevertingProtocolFeeControllerTestProtocolFeeForPool<
     functionName: 'protocolFeeForPool',
     ...config,
   } as UseContractReadConfig<typeof revertingProtocolFeeControllerTestABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link testABI}__.
- */
-export function useTestRead<
-  TFunctionName extends string,
-  TSelectData = ReadContractResult<typeof testABI, TFunctionName>,
->(config: Omit<UseContractReadConfig<typeof testABI, TFunctionName, TSelectData>, 'abi'> = {} as any) {
-  return useContractRead({ abi: testABI, ...config } as UseContractReadConfig<
-    typeof testABI,
-    TFunctionName,
-    TSelectData
-  >)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link testABI}__ and `functionName` set to `"IS_TEST"`.
- */
-export function useTestIsTest<
-  TFunctionName extends 'IS_TEST',
-  TSelectData = ReadContractResult<typeof testABI, TFunctionName>,
->(config: Omit<UseContractReadConfig<typeof testABI, TFunctionName, TSelectData>, 'abi' | 'functionName'> = {} as any) {
-  return useContractRead({ abi: testABI, functionName: 'IS_TEST', ...config } as UseContractReadConfig<
-    typeof testABI,
-    TFunctionName,
-    TSelectData
-  >)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link testABI}__.
- */
-export function useTestWrite<TFunctionName extends string, TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<PrepareWriteContractResult<typeof testABI, string>['request']['abi'], TFunctionName, TMode>
-    : UseContractWriteConfig<typeof testABI, TFunctionName, TMode> & {
-        abi?: never
-      } = {} as any,
-) {
-  return useContractWrite<typeof testABI, TFunctionName, TMode>({ abi: testABI, ...config } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link testABI}__ and `functionName` set to `"failed"`.
- */
-export function useTestFailed<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof testABI, 'failed'>['request']['abi'],
-        'failed',
-        TMode
-      > & { functionName?: 'failed' }
-    : UseContractWriteConfig<typeof testABI, 'failed', TMode> & {
-        abi?: never
-        functionName?: 'failed'
-      } = {} as any,
-) {
-  return useContractWrite<typeof testABI, 'failed', TMode>({ abi: testABI, functionName: 'failed', ...config } as any)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link testABI}__.
- */
-export function usePrepareTestWrite<TFunctionName extends string>(
-  config: Omit<UsePrepareContractWriteConfig<typeof testABI, TFunctionName>, 'abi'> = {} as any,
-) {
-  return usePrepareContractWrite({ abi: testABI, ...config } as UsePrepareContractWriteConfig<
-    typeof testABI,
-    TFunctionName
-  >)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link testABI}__ and `functionName` set to `"failed"`.
- */
-export function usePrepareTestFailed(
-  config: Omit<UsePrepareContractWriteConfig<typeof testABI, 'failed'>, 'abi' | 'functionName'> = {} as any,
-) {
-  return usePrepareContractWrite({ abi: testABI, functionName: 'failed', ...config } as UsePrepareContractWriteConfig<
-    typeof testABI,
-    'failed'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__.
- */
-export function useTestEvent<TEventName extends string>(
-  config: Omit<UseContractEventConfig<typeof testABI, TEventName>, 'abi'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, ...config } as UseContractEventConfig<typeof testABI, TEventName>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log"`.
- */
-export function useTestLogEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_address"`.
- */
-export function useTestLogAddressEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_address'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_address', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_address'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_array"`.
- */
-export function useTestLogArrayEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_array'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_array', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_array'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_bytes"`.
- */
-export function useTestLogBytesEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_bytes'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_bytes', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_bytes'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_bytes32"`.
- */
-export function useTestLogBytes32Event(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_bytes32'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_bytes32', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_bytes32'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_int"`.
- */
-export function useTestLogIntEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_int'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_int', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_int'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_address"`.
- */
-export function useTestLogNamedAddressEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_address'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_address', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_address'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_array"`.
- */
-export function useTestLogNamedArrayEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_array'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_array', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_array'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_bytes"`.
- */
-export function useTestLogNamedBytesEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_bytes'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_bytes', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_bytes'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_bytes32"`.
- */
-export function useTestLogNamedBytes32Event(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_bytes32'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_bytes32', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_bytes32'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_decimal_int"`.
- */
-export function useTestLogNamedDecimalIntEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_decimal_int'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_decimal_int', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_decimal_int'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_decimal_uint"`.
- */
-export function useTestLogNamedDecimalUintEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_decimal_uint'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_decimal_uint', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_decimal_uint'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_int"`.
- */
-export function useTestLogNamedIntEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_int'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_int', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_int'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_string"`.
- */
-export function useTestLogNamedStringEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_string'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_string', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_string'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_named_uint"`.
- */
-export function useTestLogNamedUintEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_named_uint'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_named_uint', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_named_uint'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_string"`.
- */
-export function useTestLogStringEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_string'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_string', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_string'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"log_uint"`.
- */
-export function useTestLogUintEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'log_uint'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'log_uint', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'log_uint'
-  >)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link testABI}__ and `eventName` set to `"logs"`.
- */
-export function useTestLogsEvent(
-  config: Omit<UseContractEventConfig<typeof testABI, 'logs'>, 'abi' | 'eventName'> = {} as any,
-) {
-  return useContractEvent({ abi: testABI, eventName: 'logs', ...config } as UseContractEventConfig<
-    typeof testABI,
-    'logs'
-  >)
 }
 
 /**

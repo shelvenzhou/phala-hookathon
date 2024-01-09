@@ -1,4 +1,11 @@
-import { counterABI, hookMinerABI, poolManagerABI, poolModifyLiquidityTestABI, poolSwapTestABI } from "./generated";
+import {
+  counterABI,
+  counterBacktestABI,
+  hookMinerABI,
+  poolManagerABI,
+  poolModifyLiquidityTestABI,
+  poolSwapTestABI,
+} from "./generated";
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 export const deployedContracts: GenericContractsDeclaration = {
@@ -14,6 +21,10 @@ export const deployedContracts: GenericContractsDeclaration = {
         Counter: {
           address: "0x3Ce72a2059524eC26219E6a7f9dBe387370ac1D8",
           abi: counterABI,
+        },
+        CounterBacktest: {
+          address: "0x33000E1052bb7FA6F2f9C884E6275b6438d74AF4",
+          abi: counterBacktestABI,
         },
         HookMiner: {
           address: "0x32cd5ecdA7f2B8633C00A0434DE28Db111E60636",
