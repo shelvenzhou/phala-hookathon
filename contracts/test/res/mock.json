@@ -2,54 +2,34 @@
     "data": {
       "swaps": [
         {
-          "tokenIn": {
-            "id": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3"
-          },
-          "tokenOut": {
-            "id": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4"
-          },
-          "amountIn": "42897624108290000000",
-          "amountOut": "101711861654"
+          "tokenIn": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3",
+          "tokenOut": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4",
+          "amountIn": 42897624108290000000,
+          "amountOut": 101711861654
         },
         {
-          "tokenIn": {
-            "id": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3"
-          },
-          "tokenOut": {
-            "id": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4"
-          },
-          "amountIn": "5000000000000000000",
-          "amountOut": "11858921509"
+          "tokenIn": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3",
+          "tokenOut": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4",
+          "amountIn": 5000000000000000000,
+          "amountOut": 11858921509
         },
         {
-          "tokenIn": {
-            "id": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4"
-          },
-          "tokenOut": {
-            "id": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3"
-          },
-          "amountIn": "1958989379",
-          "amountOut": "825107550519521736"
+          "tokenIn": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4",
+          "tokenOut": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3",
+          "amountIn": 1958989379,
+          "amountOut": 825107550519521736
         },
         {
-          "tokenIn": {
-            "id": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3"
-          },
-          "tokenOut": {
-            "id": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4"
-          },
-          "amountIn": "1053481017325548900",
-          "amountOut": "2497636258"
+          "tokenIn": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3",
+          "tokenOut": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4",
+          "amountIn": 1053481017325548900,
+          "amountOut": 2497636258
         },
         {
-          "tokenIn": {
-            "id": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4"
-          },
-          "tokenOut": {
-            "id": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3"
-          },
-          "amountIn": "76893314595",
-          "amountOut": "32393816993295423434"
+          "tokenIn": "0xa8cEAFb1940244F2f022FF8440a42411B4F07fC4",
+          "tokenOut": "0x2DAFBDF11A8Cf84c372539A38D781D8248399AE3",
+          "amountIn": 76893314595,
+          "amountOut": 32393816993295423434
         }
       ]
     }
