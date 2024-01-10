@@ -1,3 +1,63 @@
+# Backtest Benchmark for Uniswap LPs
+
+## Idea
+
+One of the core reasons to propose Uniswap Hooks is to enable devs to easily implement their own LP strategy.
+This raises the requirements for a *backtest* tool so they can compare their LP strategy with others using *real-world* swap dataset to know the pros and cons, and to really make it profitable.
+
+## Features
+
+- Easy integration: no needs to change the tested Hook
+- Simple testing: just run backtest with `forge test`
+- Quick and customizable test data collection: just get them from TheGraph following the instructions below
+
+## Design
+
+![System Design](design.png)
+
+## Implementation
+
+- [CounterBacktest.sol](./contracts/src/CounterBacktest.sol) implements a sample wrapper over the to-test hook contract so you can inject any logic during benchmarking;
+- [DeployHook.s.sol](./contracts/script/DeployHook.s.sol) shows how to deploy wrapped hooks: since Uniswap uses `CREATE2` to determine the contract address, both the to-test hook and backtest hook's addresses need to be determined in advance;
+- [CounterBacktest.t.sol](./contracts/test//CounterBacktest.t.sol) the unit-test driver that really runs the backtest;
+- To collect the real-world historical swaps, you can use [Uniswap v3 Ethereum](https://thegraph.com/explorer/subgraphs/ELUcwgpm14LKPLrBRuVvPvNKHQ9HvwmtKgKSH6123cr7?chain=mainnet) subgraph and the following GraphQL
+```graphql
+{
+   swaps(orderBy: timestamp, orderDirection: desc, where:
+   { pool_in: ["0x11b815efb8f581194ae79006d24e0d814b7697f6"] }
+) {
+      id,
+   hash,
+   pool {
+      id,
+      name,
+      symbol
+      },
+   tokenIn {
+      id,
+      name,
+      symbol
+      },
+   tokenOut {
+      id,
+      name,
+      symbol
+      },
+   amountIn,
+   amountOut
+   }
+}
+```
+
+## Output
+
+The unit-test will log the liquidity changes like
+![Benchmarking](benchmarking.png)
+
+Then you can easily visualize it with [online tool](https://echarts.apache.org/en/index.html).
+
+![Comparison](image.png)
+
 # scaffold-hook
 
 _Develop and test Uniswap v4 Hooks with minimal interfaces for the swap lifecycle (pool creation, liquidity provision, and swapping)_
