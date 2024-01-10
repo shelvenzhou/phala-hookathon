@@ -2,6 +2,8 @@
 pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
+import "forge-std/StdJson.sol";
+import "forge-std/console.sol";
 import {IHooks} from "@uniswap/v4-core/src/interfaces/IHooks.sol";
 import {Hooks} from "@uniswap/v4-core/src/libraries/Hooks.sol";
 import {TickMath} from "@uniswap/v4-core/src/libraries/TickMath.sol";
@@ -21,6 +23,8 @@ import {PoolSwapTest} from "@uniswap/v4-core/src/test/PoolSwapTest.sol";
 contract CounterBacktestTest is Test, Deployers {
     using PoolIdLibrary for PoolKey;
     using CurrencyLibrary for Currency;
+
+    using stdJson for string;
 
     Counter counter;
     CounterBacktest backtest;
@@ -72,28 +76,52 @@ contract CounterBacktestTest is Test, Deployers {
         );
     }
 
-    function testBack() public {
-        // read the historical swaps from json
+    struct HistoricalSwap {
+        uint256 amountIn;
+        uint256 amountOut;
+        bytes32 tokenIn;
+        bytes32 tokenOut;
     }
 
-    function testCounterHooks() public {
-        // positions were created in setup()
-        assertEq(counter.beforeAddLiquidityCount(poolId), 3);
-        assertEq(counter.afterAddLiquidityCount(poolId), 3);
+    function testBack() public {
+        // read the historical swaps from json
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/contracts/test/res/mock.json");
+        string memory json = vm.readFile(path);
+        bytes memory swapDetails = json.parseRaw(".data.swaps");
+        HistoricalSwap[] memory rawTxDetail = abi.decode(swapDetails, (HistoricalSwap[]));
 
-        assertEq(counter.beforeSwapCount(poolId), 0);
-        assertEq(counter.afterSwapCount(poolId), 0);
 
-        // Perform a test swap //
-        int256 amount = 100;
-        bool zeroForOne = true;
-        BalanceDelta swapDelta = swap(poolKey, amount, zeroForOne, ZERO_BYTES);
-        // ------------------- //
+        int256 totalOrigin0 = 0;
+        int256 totalOrigin1 = 0;
+        int256 totalReal0 = 0;
+        int256 totalReal1 = 0;
+        for (uint i = 0; i < rawTxDetail.length; i++) {
+            bool zeroForOne = rawTxDetail[i].tokenIn < rawTxDetail[i].tokenOut;
+            BalanceDelta swapDelta = swap(poolKey, int(rawTxDetail[i].amountIn), zeroForOne, ZERO_BYTES);
 
-        assertEq(int256(swapDelta.amount0()), amount);
+            if (zeroForOne) {
+                totalOrigin0 += int(rawTxDetail[i].amountIn);
+                totalOrigin1 -= int(rawTxDetail[i].amountOut);
+            } else {
+                totalOrigin0 -= int(rawTxDetail[i].amountOut);
+                totalOrigin1 += int(rawTxDetail[i].amountIn);
+            }
 
-        assertEq(counter.beforeSwapCount(poolId), 1);
-        assertEq(counter.afterSwapCount(poolId), 1);
+            totalReal0 += swapDelta.amount0();
+            totalReal1 += swapDelta.amount1();
+
+            console.log("%s:", i);
+
+            console.log("token0");
+            console.logInt(totalOrigin0);
+            console.logInt(totalReal0);
+
+            console.log("token1");
+            console.logInt(totalOrigin1);
+            console.logInt(totalReal1);
+
+        }
     }
 
     // --- Util Helper --- //
